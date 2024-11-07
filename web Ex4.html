@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zoo Ticket Booking Form</title>
+    <style>
+        .error { color: red; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <h1>Zoo Ticket Booking</h1>
+    <h2> Application Form</h2>
+    <form id="zooTicketForm">
+            
+            <legend>Visitor Information</legend>
+            <label for="fullName">Full Name:</label>
+            <input type="text" id="fullName" name="fullName">
+            <span class="error" id="fullNameError"></span><br></br>
+
+            <label for="email">Email Address:</label>
+            <input type="email" id="email" name="email">
+            <span class="error" id="emailError"></span><br></br>
+
+            <label for="phone">Phone Number:</label>
+            <input type="tel" id="phone" name="phone">
+            <span class="error" id="phoneError"></span><br></br>
+            
+        
+            <legend>Visit Details</legend>
+            <label for="visitDate">Preferred Visit Date:</label>
+            <input type="date" id="visitDate" name="visitDate">
+            <span class="error" id="visitDateError"></span><br></br>
+
+            <label for="numAdults">Number of Adults:</label>
+            <input type="number" id="numAdults" name="numAdults" min="0">
+            <span class="error" id="numAdultsError"></span><br></br>
+
+            <label for="numChildren">Number of Children:</label>
+            <input type="number" id="numChildren" name="numChildren" min="0">
+            <span class="error" id="numChildrenError"></span><br></br>
+
+            <label for="specialRequests">Special Requests/Comments:</label>
+            <textarea id="specialRequests" name="specialRequests"></textarea><br></br>
+        
+            <legend>Ticket Type</legend>
+            <label for="ticketType">Select Ticket Type:</label>
+            <select id="ticketType" name="ticketType">
+                <option value="">--Select--</option>
+                <option value="standard">Standard</option>
+                <option value="family">Family</option>
+                <option value="seasonPass">Season Pass</option>
+            </select>
+            <span class="error" id="ticketTypeError"></span><br></br>
+        
+
+        
+        <form id="paymentInfo">
+            <legend>Payment Information</legend>
+            <label for="paymentMethod">Payment Method:</label>
+            <select id="paymentMethod" name="paymentMethod">
+                <option value="">--Select--</option>
+                <option value="creditCard">Credit Card</option>
+                <option value="paypal">PayPal</option>
+                <option value="giftCard">Gift Card</option>
+            </select>
+            <span class="error" id="paymentMethodError"></span><br></br>
+
+            
+        </form>
+
+        
+        <button type="submit">Submit</button>
+    </form>
+
+     //<script src="form-validation.js"></script> 
+</body>
+</html>
+
