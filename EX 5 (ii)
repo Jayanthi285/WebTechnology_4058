@@ -1,0 +1,135 @@
+ZooTicketServlet.java :
+
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/ZooTicketServlet")
+public class ZooTicketServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        // Retrieve form data
+        String fullName = request.getParameter("fullName");
+        String email = request.getParameter("email");
+        String phone = request.getParameter("phone");
+        String visitDate = request.getParameter("visitDate");
+        String numAdults = request.getParameter("numAdults");
+        String numChildren = request.getParameter("numChildren");
+        String specialRequests = request.getParameter("specialRequests");
+        String ticketType = request.getParameter("ticketType");
+        String paymentMethod = request.getParameter("paymentMethod");
+
+        // Set response content type
+        response.setContentType("text/html");
+        PrintWriter out = response.getWriter();
+
+        // Display confirmation
+        out.println("<html><body>");
+        out.println("<h1>Zoo Ticket Booking Confirmation</h1>");
+        out.println("<p>Thank you for your booking, " + fullName + "!</p>");
+        out.println("<p>Email: " + email + "</p>");
+        out.println("<p>Phone: " + phone + "</p>");
+        out.println("<p>Visit Date: " + visitDate + "</p>");
+        out.println("<p>Number of Adults: " + numAdults + "</p>");
+        out.println("<p>Number of Children: " + numChildren + "</p>");
+        out.println("<p>Special Requests: " + specialRequests + "</p>");
+        out.println("<p>Ticket Type: " + ticketType + "</p>");
+        out.println("<p>Payment Method: " + paymentMethod + "</p>");
+        out.println("</body></html>");
+
+        out.close();
+    }
+}
+
+
+
+WEB.XML
+
+               <?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+                             http://java.sun.com/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1">
+
+    <!-- Servlet Configuration -->
+    <servlet>
+        <servlet-name>ZooTicketServlet</servlet-name>
+        <servlet-class>ZooTicketServlet</servlet-class>
+    </servlet>
+
+    <!-- Servlet Mapping -->
+    <servlet-mapping>
+        <servlet-name>ZooTicketServlet</servlet-name>
+        <url-pattern>/ZooTicketServlet</url-pattern>
+    </servlet-mapping>
+
+</web-app>
+
+
+
+
+zooform.html  :
+
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zoo Ticket Booking Form</title>
+</head>
+<body>
+    <h1>Zoo Ticket Booking</h1>
+    <h2>Application Form</h2>
+    <form action="ZooTicketServlet" method="post">
+        <legend>Visitor Information</legend>
+        <label for="fullName">Full Name:</label>
+        <input type="text" id="fullName" name="fullName"><br><br>
+
+        <label for="email">Email Address:</label>
+        <input type="email" id="email" name="email"><br><br>
+
+        <label for="phone">Phone Number:</label>
+        <input type="tel" id="phone" name="phone"><br><br>
+
+        <legend>Visit Details</legend>
+        <label for="visitDate">Preferred Visit Date:</label>
+        <input type="date" id="visitDate" name="visitDate"><br><br>
+
+        <label for="numAdults">Number of Adults:</label>
+        <input type="number" id="numAdults" name="numAdults" min="0"><br><br>
+
+        <label for="numChildren">Number of Children:</label>
+        <input type="number" id="numChildren" name="numChildren" min="0"><br><br>
+
+        <label for="specialRequests">Special Requests/Comments:</label>
+        <textarea id="specialRequests" name="specialRequests"></textarea><br><br>
+
+        <legend>Ticket Type</legend>
+        <label for="ticketType">Select Ticket Type:</label>
+        <select id="ticketType" name="ticketType">
+            <option value="">--Select--</option>
+            <option value="standard">Standard</option>
+            <option value="family">Family</option>
+            <option value="seasonPass">Season Pass</option>
+        </select><br><br>
+
+        <legend>Payment Information</legend>
+        <label for="paymentMethod">Payment Method:</label>
+        <select id="paymentMethod" name="paymentMethod">
+            <option value="">--Select--</option>
+            <option value="creditCard">Credit Card</option>
+            <option value="paypal">PayPal</option>
+            <option value="giftCard">Gift Card</option>
+        </select><br><br>
+
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
