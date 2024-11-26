@@ -1,0 +1,355 @@
+USING COOKIES:
+
+  AnimalPageServlet.java:
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+@WebServlet("/animalPage")
+public class AnimalPageServlet extends HttpServlet {
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String userName = null;
+        int visitCount = 0;
+
+        // Retrieve cookies
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                switch (cookie.getName()) {
+                    case "userName":
+                        userName = cookie.getValue();
+                        break;
+                    case "visitCount":
+                        visitCount = Integer.parseInt(cookie.getValue());
+                        break;
+                }
+            }
+        }
+
+        visitCount++;
+        Cookie visitCookie = new Cookie("visitCount", Integer.toString(visitCount));
+        visitCookie.setMaxAge(60 * 60 * 24);  // 1 day
+        response.addCookie(visitCookie);
+
+        response.setContentType("text/html");
+        PrintWriter out = response.getWriter();
+        out.println("<html><body>");
+        out.println("<h1>Zoo Animal Page</h1>");
+        if (userName != null) {
+            out.println("<p>Welcome back, " + userName + "!</p>");
+        } else {
+            out.println("<p>Welcome to the zoo!</p>");
+        }
+        out.println("<p>Number of visits: " + visitCount + "</p>");
+        out.println("<form method='POST' action='animalPage'>");
+        out.println("Name: <input type='text' name='userName'><br>");
+        out.println("<input type='submit' value='Save Name'>");
+        out.println("</form>");
+        out.println("</body></html>");
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String userName = request.getParameter("userName");
+        if (userName != null && !userName.trim().isEmpty()) {
+            Cookie userCookie = new Cookie("userName", userName);
+            userCookie.setMaxAge(60 * 60 * 24 * 30);  // 30 days
+            response.addCookie(userCookie);
+        }
+        response.sendRedirect("animalPage");
+    }
+}
+
+WEB.XML:
+      <web-app xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+                             http://java.sun.com/xml/ns/javaee/web-app_4_0.xsd"
+         version="4.0">
+
+    <!-- Servlet for Home Page -->
+    <servlet>
+        <servlet-name>HomePageServlet</servlet-name>
+        <servlet-class>com.zoo.HomePageServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>HomePageServlet</servlet-name>
+        <url-pattern>/homePage</url-pattern>
+    </servlet-mapping>
+
+    <!-- Servlet for Zoo Page (Where user interacts with cookies) -->
+    <servlet>
+        <servlet-name>ZooPageServlet</servlet-name>
+        <servlet-class>com.zoo.ZooPageServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ZooPageServlet</servlet-name>
+        <url-pattern>/zooPage</url-pattern>
+    </servlet-mapping>
+
+    <!-- Servlet for Changing Theme -->
+    <servlet>
+        <servlet-name>ThemeServlet</servlet-name>
+        <servlet-class>com.zoo.ThemeServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ThemeServlet</servlet-name>
+        <url-pattern>/theme</url-pattern>
+    </servlet-mapping>
+
+</web-app>
+
+
+index.html :
+            <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zoo Welcome Page</title>
+    <style>
+        body {
+            background-image: url("zoo.jpg");
+            background-size: cover;
+            font-family: Arial, sans-serif;
+            font-size: xx-large;
+        }
+        .container {
+            text-align: center;
+            padding: 50px;
+        }
+        .title {
+            font-size: 2.5em;
+            color: #1c0912;
+            margin-bottom: 20px;
+        }
+        .link-button {
+            display: inline-block;
+            padding: 15px 25px;
+            font-size: 1.2em;
+            color: white;
+            background-color: #e12c87;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .link-button:hover {
+            background-color: #ff1493;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">Welcome to Our Zoo!</div>
+        <a href="animalPage" class="link-button">Enter Zoo Animal Page</a>
+    </div>
+</body>
+</html>
+
+OUTPUT:
+ 
+
+ 
+
+
+HTTP SESSION:
+ZooSessionServlet.java:
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+@WebServlet("/zooSession")
+public class ZooSessionServlet extends HttpServlet {
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession(true);
+        String userName = (String) session.getAttribute("userName");
+        Integer visitCount = (Integer) session.getAttribute("visitCount");
+
+        if (visitCount == null) {
+            visitCount = 0;
+        }
+
+        visitCount++;
+        session.setAttribute("visitCount", visitCount);
+
+        response.setContentType("text/html");
+        PrintWriter out = response.getWriter();
+        out.println("<html><body>");
+        out.println("<h1>Zoo Animal Page</h1>");
+        if (userName != null) {
+            out.println("<p>Welcome back, " + userName + "!</p>");
+        } else {
+            out.println("<p>Welcome to the zoo!</p>");
+        }
+        out.println("<p>Number of visits: " + visitCount + "</p>");
+        out.println("<form method='POST' action='zooSession'>");
+        out.println("Name: <input type='text' name='userName'><br>");
+        out.println("<input type='submit' value='Save Name'>");
+        out.println("</form>");
+        out.println("</body></html>");
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession(true);
+        String userName = request.getParameter("userName");
+        if (userName != null && !userName.trim().isEmpty()) {
+            session.setAttribute("userName", userName);
+        }
+        response.sendRedirect("zooSession");
+    }
+}
+
+OUTPUT:
+ 
+
+URL REWRITING:
+ZooURLRewritingServlet.java
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+@WebServlet("/zooPage")
+public class ZooURLRewritingServlet extends HttpServlet {
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String userName = request.getParameter("userName");
+        String visitCountStr = request.getParameter("visitCount");
+        int visitCount = 0;
+
+        if (visitCountStr != null && !visitCountStr.isEmpty()) {
+            visitCount = Integer.parseInt(visitCountStr);
+        }
+
+        visitCount++;
+        response.setContentType("text/html");
+        PrintWriter out = response.getWriter();
+        out.println("<html><body>");
+        out.println("<h1>Zoo Animal Page</h1>");
+        if (userName != null) {
+            out.println("<p>Welcome back, " + userName + "!</p>");
+        } else {
+            out.println("<p>Welcome to the zoo!</p>");
+        }
+        out.println("<p>Number of visits: " + visitCount + "</p>");
+        out.println("<form method='POST' action='zooPage'>");
+        out.println("Name: <input type='text' name='userName' value='" + (userName != null ? userName : "") + "'><br>");
+        out.println("<input type='hidden' name='visitCount' value='" + visitCount + "'>");
+        out.println("<input type='submit' value='Save Name'>");
+        out.println("</form>");
+        out.println("</body></html>");
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String userName = request.getParameter("userName");
+        String visitCountStr = request.getParameter("visitCount");
+        int visitCount = Integer.parseInt(visitCountStr);
+
+        String url = "zooPage?userName=" + userName + "&visitCount=" + visitCount;
+        response.sendRedirect(url);
+    }
+}
+
+OUTPUT:
+ 
+
+ 
+
+
+HIDDEN FORM FIELDS:
+ZooHiddenFieldsServlet.java
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+@WebServlet("/zooHiddenPage")
+public class ZooHiddenFieldsServlet extends HttpServlet {
+    
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // Retrieve parameters from hidden fields in the URL
+        String userName = request.getParameter("userName");
+        String visitCountStr = request.getParameter("visitCount");
+        int visitCount = 0;
+
+        // Initialize the visit count to 0 if not present in the request
+        if (visitCountStr != null && !visitCountStr.isEmpty()) {
+            visitCount = Integer.parseInt(visitCountStr);
+        }
+        
+        // Increment the visit count
+        visitCount++;
+        
+        // Set content type and initialize PrintWriter for generating the response
+        response.setContentType("text/html");
+        PrintWriter out = response.getWriter();
+
+        // Generate the HTML page to display the user information and visit count
+        out.println("<html><body>");
+        out.println("<h1>Zoo Themed Page</h1>");
+        
+        // If the userName exists, display a welcome message with the user's name
+        if (userName != null) {
+            out.println("<p>Welcome back, " + userName + "!</p>");
+        } else {
+            out.println("<p>Welcome to our zoo page!</p>");
+        }
+        
+        // Display the visit count
+        out.println("<p>Number of visits: " + visitCount + "</p>");
+
+        // Form for user to input their name and submit it along with the visit count
+        out.println("<form method='POST' action='zooHiddenPage'>");
+        out.println("Name: <input type='text' name='userName' value='" + (userName != null ? userName : "") + "'><br>");
+        
+        // Hidden form fields to store the visit count
+        out.println("<input type='hidden' name='visitCount' value='" + visitCount + "'>");
+        out.println("<input type='submit' value='Save Name and Visit Count'>");
+        out.println("</form>");
+        
+        out.println("</body></html>");
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // Get the parameters submitted by the user via POST method
+        String userName = request.getParameter("userName");
+        String visitCountStr = request.getParameter("visitCount");
+        int visitCount = 0;
+
+        // Convert the visit count string to an integer if it's not null or empty
+        if (visitCountStr != null && !visitCountStr.isEmpty()) {
+            visitCount = Integer.parseInt(visitCountStr);
+        }
+
+        // Redirect to the same page with userName and visitCount as query parameters
+        String url = "zooHiddenPage?userName=" + userName + "&visitCount=" + visitCount;
+        response.sendRedirect(url);
+    }
+}
+
+
+
