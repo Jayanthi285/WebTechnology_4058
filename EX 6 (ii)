@@ -1,0 +1,65 @@
+EXTRACT THE XML USING PHP: 
+
+          zoo.xml:
+
+<?xml version="1.0" encoding="UTF-8"?>
+<zoo>
+    <animal>
+        <name>Lion</name>
+        <species>Panthera leo</species>
+        <age>5</age>
+    </animal>
+    <animal>
+        <name>Elephant</name>
+        <species>Elephas maximus</species>
+        <age>8</age>
+    </animal>
+    <animal>
+        <name>Giraffe</name>
+        <species>Giraffa camelopardalis</species>
+        <age>6</age>
+    </animal>
+</zoo>
+
+
+
+php code:
+
+
+   <?php
+
+$xml = simplexml_load_file('zoo.xml') or die("Error: Cannot create object");
+
+
+echo "<h1>Zoo Animals List</h1>";
+echo "<ul>";
+
+
+foreach ($xml->animal as $animal) {
+    echo "<li>";
+    echo "<strong>Name:</strong> " . $animal->name . "<br>";
+    echo "<strong>Species:</strong> " . $animal->species . "<br>";
+    echo "<strong>Age:</strong> " . $animal->age . " years<br>";
+    echo "</li><br>";
+}
+
+echo "</ul>";
+?>
+
+
+OUTPUT:
+
+Zoo Animals List
+
+  Name: Lion
+  Species: Panthera leo
+  Age: 5 years
+
+  Name: Elephant
+  Species: Elephas maximus
+  Age: 8 years
+
+  Name: Giraffe
+  Species: Giraffa camelopardalis
+  Age: 6 years
+
